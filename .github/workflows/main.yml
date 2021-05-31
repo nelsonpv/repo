@@ -3,8 +3,8 @@ jobs:
   build-secure-and-push:
     runs-on: ubuntu-latest
     steps:
-    #- uses: actions/checkout@master
-    #- run: docker build . -t cicdacr2.azurecr.io/samples/nginx:${{ github.sha }}
+    - uses: actions/checkout@master
+    - run: docker build . -t cicdacr2.azurecr.io/samples/nginx:${{ github.sha }}
       
     - name: Scan container image for vulnerabilities
       id: container_scan
