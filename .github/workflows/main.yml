@@ -1,0 +1,27 @@
+on: [push]
+jobs:
+  build-secure-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - run: docker build . -t cicdacr2.azurecr.io/samples/nginx:${{ github.sha }}
+      
+    - name: Scan container image for vulnerabilities
+      id: container_scan
+      uses: Azure/container-scan@v0
+      with:
+        image-name: cicdacr2.azurecr.io/samples/nginx:${{ github.sha }}
+    - name: Publish container scan results to ASC
+      uses: azure/publish-security-assessments@v1
+      with:
+        subscription-token: ${{ secrets.asc_subscription_token }}
+        instrumentation-key: ${{ secrets.ai_instrumentation_key }}
+        scan-results-path: ${{ steps.container_scan.outputs.scan-report-path }}
+    
+    - uses: Azure/docker-login@v1
+      with:
+        login-server: contoso.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    
+    - run: docker push cicdacr2.azurecr.io/samples/nginx:${{ github.sha }}
