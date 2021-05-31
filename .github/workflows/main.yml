@@ -12,7 +12,7 @@ jobs:
       with:
         image-name: cicdacr2.azurecr.io/samples/nginx:${{ github.sha }}
     - name: Publish container scan results to ASC
-      uses: azure/publish-security-assessments@v1
+      uses: azure/publish-security-assessments
       with:
         subscription-token: ${{ secrets.asc_subscription_token }}
         instrumentation-key: ${{ secrets.ai_instrumentation_key }}
